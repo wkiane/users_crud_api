@@ -165,15 +165,52 @@ RSpec.describe "Auth", type: :request do
       )
     end
 
-    it "it should not update a password without password_confirm"
+    # it "it should not update a password without password_confirmation" do 
+    #   user = create(:user)
 
-    it "it should not update a password and password_confirm are not equal"
+    #   user_params = {
+    #     password: "321312312",
+    #   }
 
-    it "it should not update password when length is minus than 6"
+    #   user_headers = user.create_new_auth_token
+    #   put "/users/#{user.id}", params: user_params, headers: user_headers
 
-    it "should not update role field when user is logged in"
+    #   expect(response).to_not have_http_status(200)
+    # end
 
-    it "should update role when admin is logged in"
+
+    it "should not update role field when user is logged in" do
+      user = create(:user)
+
+      user_params = {
+        role: "admin"
+      }
+
+      user_headers = user.create_new_auth_token
+
+      put "/users/#{user.id}", params: user_params, headers: user_headers
+
+      expect(response.body).to include_json(
+        role: "user"
+      )
+    end
+
+    it "should update role when admin is logged in" do
+      user = create(:user)
+      admin = create(:user, role: "admin")
+
+      user_params = {
+        role: "admin"
+      }
+
+      admin_headers = admin.create_new_auth_token
+
+      put "/users/#{user.id}", params: user_params, headers: admin_headers
+
+      expect(response.body).to include_json(
+        role: "admin"
+      )
+    end
   end
 
 

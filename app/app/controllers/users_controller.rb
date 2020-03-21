@@ -11,7 +11,13 @@ class UsersController < ApplicationController
 
   def update
     authorize @user
-    @user.update(user_params)
+
+    if is_admin(current_user)
+      @user.update(admin_params)
+    else 
+      @user.update(user_params)
+    end
+
     json_response(@user)
   end
 
@@ -20,13 +26,6 @@ class UsersController < ApplicationController
     json_response(@user)
   end
 
-  def update
-    authorize @user
-    @user.update(user_params)
-
-
-    json_response(@user)
-  end
 
   def destroy
     authorize @user
@@ -35,8 +34,20 @@ class UsersController < ApplicationController
 
   private
 
+  def is_admin(user)
+    if user.role == "admin"
+      true
+    else
+      false
+    end
+  end
+
   def user_params
-    params.permit(:first_name, :last_name, :password, :email)
+    params.permit(:first_name, :last_name, :password, :password_confirmation, :email)
+  end
+
+  def admin_params
+    params.permit(:first_name, :last_name, :password, :password_confirmation, :email, :role)
   end
 
   def set_user

@@ -14,6 +14,6 @@ class User < ActiveRecord::Base
     super && !discarded_at  
   end
 
-
   validates :first_name, :last_name, presence: true
 end
+
