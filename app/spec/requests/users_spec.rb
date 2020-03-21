@@ -90,6 +90,92 @@ RSpec.describe "Auth", type: :request do
     end
   end
 
+  describe "PUT /users/id" do
+    it "should not update a user when not logged in" do 
+      user = create(:user)
+
+      user_params = {
+        first_name: FFaker::Name.unique.first_name,
+        last_name: FFaker::Name.unique.last_name
+      }
+
+      put "/users/#{user.id}", params: user_params
+
+      expect(response).to have_http_status(401)
+      expect(response.body).to include_json(
+          errors: [
+            "You need to sign in or sign up before continuing."
+          ]
+      )
+    end
+
+    it "should not update another user account" do
+      update_user = create(:user)
+      user = create(:user)
+
+      user_params = {
+        first_name: FFaker::Name.unique.first_name,
+        last_name: FFaker::Name.unique.last_name
+      }
+
+
+      user_headers = user.create_new_auth_token
+      put "/users/#{update_user.id}", params: user_params, headers: user_headers
+
+      expect(response).to have_http_status(403)
+      expect(response.body).to include_json(
+        id: "forbidden",
+        message: "Você não tem acesso a este recurso."
+      )
+    end
+
+    it "should update the current logged profile" do
+      user = create(:user)
+
+      user_params = {
+        first_name: FFaker::Name.unique.first_name,
+        last_name: FFaker::Name.unique.last_name
+      }
+
+      user_headers = user.create_new_auth_token
+      put "/users/#{user.id}", params: user_params, headers: user_headers
+
+      expect(response).to have_http_status(200)
+      expect(response.body).to include_json(
+        user_params
+      )
+
+    end
+
+    it "should update any account when admin user is logged" do
+      admin = create(:user, role: "admin")
+      user = create(:user)
+
+      user_params = {
+        first_name: FFaker::Name.unique.first_name,
+        last_name: FFaker::Name.unique.last_name
+      }
+
+      admin_headers = admin.create_new_auth_token
+      put "/users/#{user.id}", params: user_params, headers: admin_headers
+
+      expect(response).to have_http_status(200)
+      expect(response.body).to include_json(
+        user_params
+      )
+    end
+
+    it "it should not update a password without password_confirm"
+
+    it "it should not update a password and password_confirm are not equal"
+
+    it "it should not update password when length is minus than 6"
+
+    it "should not update role field when user is logged in"
+
+    it "should update role when admin is logged in"
+  end
+
 
   describe "DELETE /users/id" do
     it "should not deleted a user when not logged in" do

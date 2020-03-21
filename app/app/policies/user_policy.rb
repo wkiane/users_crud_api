@@ -7,6 +7,10 @@ class UserPolicy < ApplicationPolicy
     user.role == 'admin' || user == record
   end
 
+  def update?
+    user.role == 'admin' || user == record
+  end
+
   def destroy?
     user.role == 'admin' || user == record
   end
