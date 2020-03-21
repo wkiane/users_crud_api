@@ -11,8 +11,8 @@ module ExceptionHandler
       json_response({ message: e.message }, :unprocessable_entity)
     end
 
-    rescue_from Pundit::NotAuthorizedError, with: :forbidden do |e|
-      json_response({ message: 'Você não tem acesso a este recurso.'}, :forbidden)
+    rescue_from Pundit::NotAuthorizedError do |e|
+      json_response({ id: 'forbidden', message: 'Você não tem acesso a este recurso.'}, :forbidden)
     end
   end
 end
