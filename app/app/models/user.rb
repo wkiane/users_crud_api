@@ -10,5 +10,10 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
 
+  def active_for_authentication?  
+    super && !discarded_at  
+  end
+
+
   validates :first_name, :last_name, presence: true
 end
