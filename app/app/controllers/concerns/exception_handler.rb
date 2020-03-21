@@ -10,5 +10,9 @@ module ExceptionHandler
     rescue_from ActiveRecord::RecordInvalid do |e|
       json_response({ message: e.message }, :unprocessable_entity)
     end
+
+    rescue_from Pundit::NotAuthorizedError, with: :forbidden do |e|
+      json_response({ message: 'Você não tem acesso a este recurso.'}, :forbidden)
+    end
   end
 end
