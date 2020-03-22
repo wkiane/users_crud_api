@@ -2,6 +2,7 @@ postgres
 app/node_modules
 .env
 
+app/.env
 
 # See https://help.github.com/articles/ignoring-files for more about ignoring files.
 #
