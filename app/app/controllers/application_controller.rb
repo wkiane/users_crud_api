@@ -6,6 +6,13 @@ class ApplicationController < ActionController::API
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+
+  def index
+    json_response({
+      error: 'Cannot get'
+    }, :not_found)
+  end
+
   protected
 
   def configure_permitted_parameters
