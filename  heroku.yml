@@ -6,3 +6,7 @@ setup:
     web: ./Dockerfile
   config:
     REQUIREMENTS_FILENAME: heroku.yml
+ run:
+  image: web
+  command:
+    - echo 'Starting server after deployment!';
