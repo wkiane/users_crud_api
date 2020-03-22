@@ -16,7 +16,7 @@ Gems utilizadas no projeto:
 
 Para usar a API, utilize o endereço:
 
-`https://todo/[command]`
+`https://users-crud-ror.herokuapp.com/[command]`
 
 Onde [command] pode ser um dos serviços listados abaixo:
 
