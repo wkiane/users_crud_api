@@ -69,6 +69,22 @@ RSpec.describe "Auth", type: :request do
       )
     end
 
+    it "should not show a deleted account" do
+      admin = create(:user, role: "admin")
+      user = create(:user)
+
+      user.discard
+
+      admin_headers = admin.create_new_auth_token
+      get "/users/#{user.id}", headers: admin_headers
+
+      expect(response).to have_http_status(404)
+      expect(response.body).to include_json(
+        id: "not_found",
+        message: "Usuário não encontrado"
+      )
+    end
+
     it "should show the profile to a logged user" do
       user = create(:user)
 
@@ -162,6 +178,26 @@ RSpec.describe "Auth", type: :request do
       expect(response).to have_http_status(200)
       expect(response.body).to include_json(
         user_params
+      )
+    end
+
+    it "should not update a deleted account" do
+      admin = create(:user, role: "admin")
+      user = create(:user)
+
+      user_params = {
+        first_name: FFaker::Name.unique.first_name,
+      }
+
+      user.discard
+
+      admin_headers = admin.create_new_auth_token
+      put "/users/#{user.id}", params: user_params, headers: admin_headers
+
+      expect(response).to have_http_status(404)
+      expect(response.body).to include_json(
+        id: "not_found",
+        message: "Usuário não encontrado"
       )
     end
 
@@ -279,6 +315,22 @@ RSpec.describe "Auth", type: :request do
       delete "/users/#{user.id}", params: {}, headers: admin_headers
 
       expect(response).to have_http_status(204)
+    end
+
+    it "should not delete a deleted account" do
+      admin = create(:user, role: "admin")
+      user = create(:user)
+
+      user.discard
+
+      admin_headers = admin.create_new_auth_token
+      delete "/users/#{user.id}", headers: admin_headers
+
+      expect(response).to have_http_status(404)
+      expect(response.body).to include_json(
+        id: "not_found",
+        message: "Usuário não encontrado"
+      )
     end
   end  
 end

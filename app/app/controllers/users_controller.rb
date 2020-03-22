@@ -64,6 +64,10 @@ class UsersController < ApplicationController
   end
 
   def set_user
-    @user = User.find(params[:id])
+    @user = User.where(id: params[:id], discarded_at: [nil, ""]).first
+
+    if @user.nil?
+      json_response({ id: "not_found", message: "Usuário não encontrado" }, :not_found)
+    end
   end
 end
