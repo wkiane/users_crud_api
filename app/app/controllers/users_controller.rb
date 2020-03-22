@@ -12,6 +12,11 @@ class UsersController < ApplicationController
   def update
     authorize @user
 
+
+    if password_validation_fail
+      return json_response({ error: password_validation_fail }, :unprocessable_entity)
+    end
+
     if is_admin(current_user)
       @user.update(admin_params)
     else 
@@ -39,6 +44,14 @@ class UsersController < ApplicationController
       true
     else
       false
+    end
+  end
+
+  def password_validation_fail
+    if params[:password] && params[:password_confirmation].blank?
+      "Campo confirmação de senha deve ser preenchido"
+    elsif params[:password] != params[:password_confirmation]
+      "Campo confirmação de senha deve ser idêntico ao campo senha"
     end
   end
 

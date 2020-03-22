@@ -165,18 +165,38 @@ RSpec.describe "Auth", type: :request do
       )
     end
 
-    # it "it should not update a password without password_confirmation" do 
-    #   user = create(:user)
+    it "should not update a password without password_confirmation" do 
+      user = create(:user)
 
-    #   user_params = {
-    #     password: "321312312",
-    #   }
+      user_params = {
+        password: "321312312",
+      }
 
-    #   user_headers = user.create_new_auth_token
-    #   put "/users/#{user.id}", params: user_params, headers: user_headers
+      user_headers = user.create_new_auth_token
+      put "/users/#{user.id}", params: user_params, headers: user_headers
 
-    #   expect(response).to_not have_http_status(200)
-    # end
+      expect(response).to have_http_status(422)
+      expect(response.body).to include_json(
+        error: "Campo confirmação de senha deve ser preenchido"
+      )
+    end
+
+    it "should not udpate password when password_confirmation and password fields are not equal" do
+      user = create(:user)
+
+      user_params = {
+        password: "321312312",
+        password_confirmation: "32313",
+      }
+
+      user_headers = user.create_new_auth_token
+      put "/users/#{user.id}", params: user_params, headers: user_headers
+
+      expect(response).to have_http_status(422)
+      expect(response.body).to include_json(
+        error: "Campo confirmação de senha deve ser idêntico ao campo senha"
+      )
+    end
 
 
     it "should not update role field when user is logged in" do
