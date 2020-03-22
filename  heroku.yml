@@ -1,7 +1,8 @@
-build:
+setup:
+  addons:
+    - plan: heroku-postgresql
+ build:
   docker:
-    web: Dockerfile
-release:
-  image: web
-  command:
-    - echo 'Starting server after deployment!';
+    web: ./Dockerfile
+  config:
+    REQUIREMENTS_FILENAME: heroku.yml
